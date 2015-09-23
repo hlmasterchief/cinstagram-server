@@ -1,14 +1,6 @@
-User = require('../models/User');
+Post = require('../models/Post');
 
-var UserController = {
-    signin: function(req, res, next) {
-        res.send('signin');
-        next();
-    },
-    signout: function(req, res, next) {
-        res.send('signout');
-        next();
-    },
+var PostController = {
     create: function(req, res, next) {
         res.send('create');
         next();
@@ -31,4 +23,4 @@ var UserController = {
     }
 };
 
-module.exports = UserController;
+module.exports = PostController;

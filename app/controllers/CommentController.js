@@ -1,14 +1,6 @@
-User = require('../models/User');
+Comment = require('../models/Comment');
 
-var UserController = {
-    signin: function(req, res, next) {
-        res.send('signin');
-        next();
-    },
-    signout: function(req, res, next) {
-        res.send('signout');
-        next();
-    },
+var CommentController = {
     create: function(req, res, next) {
         res.send('create');
         next();
@@ -31,4 +23,4 @@ var UserController = {
     }
 };
 
-module.exports = UserController;
+module.exports = CommentController;
