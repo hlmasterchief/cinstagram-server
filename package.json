@@ -4,7 +4,8 @@
   "description": "clone instagram server side",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "start": "node index.js",
+    "test": "nodemon index.js"
   },
   "author": "hl <hlmasterchief93@gmail.com>",
   "license": "MIT",
