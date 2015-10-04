@@ -20,5 +20,8 @@
   "repository": {
     "type": "git",
     "url": "https://hlmasterchief93@bitbucket.org/hlmasterchief93/cinstagram-server.git"
+  },
+  "devDependencies": {
+    "morgan": "^1.6.1"
   }
 }
