@@ -1,4 +1,6 @@
-User = require('../models/User');
+var User = require('../models/User');
+var jwt = require('jsonwebtoken');
+var config = require('../config');
 
 var UserController = {
     signin: function(req, res, next) {
@@ -23,9 +25,17 @@ var UserController = {
                 return next();
             }
 
+            var token = jwt.sign(user._id, config.secret, {
+              expiresIn: '1d'
+            });
+
+            // var decoded = jwt.verify(token, config.secret);
+            // console.log(decoded)
+
             res.send({
                 success: true,
-                message: 'Success.'
+                message: 'Success.',
+                token: token
             });
         });
 
