@@ -1,6 +1,7 @@
 UserController = require('../controllers/UserController');
 PostController = require('../controllers/PostController');
 CommentController = require('../controllers/CommentController');
+authentication = require('../middleware/authentication');
 
 function homepage(req, res, next) {
     res.send('Cinstagram');
@@ -11,11 +12,11 @@ var route = function(server) {
     server.get('/', homepage);
 
     server.post('/auth', UserController.signin);
-    server.get('/auth', UserController.signout);
+    server.get('/auth', authentication, UserController.signout);
 
     server.post('/users', UserController.create);
     server.get('/users', UserController.read);
-    server.put('/users', UserController.update);
+    server.put('/users', authentication, UserController.update);
     server.del('/users', UserController.delete);
 
     server.post('/posts', PostController.create);

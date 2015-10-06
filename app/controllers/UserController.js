@@ -28,9 +28,7 @@ var UserController = {
             var token = jwt.sign(user._id, config.secret, {
               expiresIn: '1d'
             });
-
-            // var decoded = jwt.verify(token, config.secret);
-            // console.log(decoded)
+            console.log(user.username + "\n" + token);
 
             res.send({
                 success: true,
@@ -41,10 +39,15 @@ var UserController = {
 
         next();
     },
+
     signout: function(req, res, next) {
-        res.send('signout');
+        res.send({
+            success: true,
+            message: 'User signout.'
+        });
         next();
     },
+
     create: function(req, res, next) {
         var email    = req.body.email,
             username = req.body.username,
@@ -57,23 +60,59 @@ var UserController = {
             avatar: ""
         });
 
-        user.save();
+        user.save(function(err) {
+            if (err) throw err;
 
-        res.send(user);
-        next();
+            var token = jwt.sign(user._id, config.secret, {
+              expiresIn: '1d'
+            });
+            console.log(user.username + "\n" + token);
+
+            res.send({
+                success: true,
+                message: 'Signup success.',
+                token: token,
+                username: username
+            });
+            next();
+        });
     },
+
     readAll: function(req, res, next) {
         res.send('readAll');
         next();
     },
+
     read: function(req, res, next) {
         res.send('read');
         next();
     },
+
     update: function(req, res, next) {
-        res.send('update');
-        next();
+        if (req.body.oldPassword != req.authUser.password) {
+            res.send(403, {
+                success: false,
+                message: 'Wrong old password.'
+            });
+            return next();
+        }
+
+        req.authUser.email    = req.body.email,
+        req.authUser.username = req.body.username,
+        req.authUser.password = req.body.password;
+
+        req.authUser.save(function(err) {
+            if (err) throw err;
+
+            res.send({
+                success: true,
+                message: 'Update success.',
+                username: req.authUser.username
+            });
+            next();
+        });
     },
+
     delete: function(req, res, next) {
         res.send('delete');
         next();
