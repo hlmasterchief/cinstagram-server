@@ -3,12 +3,6 @@ var jwt = require('jsonwebtoken');
 var config = require('../config');
 var cloudinary = require('cloudinary');
 
-cloudinary.config({ 
-  cloud_name: 'cinstagram', 
-  api_key: '499894725433259', 
-  api_secret: 'Vb5WPU6unvMHscf-Gs1d_-E4-II' 
-});
-
 var UserController = {
     signin: function(req, res, next) {
         var username = req.body.username,
@@ -121,6 +115,14 @@ var UserController = {
     },
 
     updateAvatar: function(req, res, next) {
+        if (!req.files.avatar) {
+            res.send({
+                success: false,
+                message: 'Avatar uploaded failed.'
+            });
+            return next();
+        }
+
         cloudinary.uploader.upload(req.files.avatar.path, function(result) { 
             
             req.authUser.avatar = result.url;
