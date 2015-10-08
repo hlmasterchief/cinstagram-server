@@ -136,6 +136,9 @@ var UserController = {
                 });
                 next();
             });
+        },
+        {
+            folder: "avatar"
         });
     },
 
