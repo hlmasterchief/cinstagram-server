@@ -1,6 +1,13 @@
 var User = require('../models/User');
 var jwt = require('jsonwebtoken');
 var config = require('../config');
+var cloudinary = require('cloudinary');
+
+cloudinary.config({ 
+  cloud_name: 'cinstagram', 
+  api_key: '499894725433259', 
+  api_secret: 'Vb5WPU6unvMHscf-Gs1d_-E4-II' 
+});
 
 var UserController = {
     signin: function(req, res, next) {
@@ -110,6 +117,23 @@ var UserController = {
                 username: req.authUser.username
             });
             next();
+        });
+    },
+
+    updateAvatar: function(req, res, next) {
+        cloudinary.uploader.upload(req.files.avatar.path, function(result) { 
+            
+            req.authUser.avatar = result.url;
+            req.authUser.save(function(err) {
+                if (err) throw err;
+
+                res.send({
+                    success: true,
+                    message: 'Update success.',
+                    username: req.authUser.avatar
+                });
+                next();
+            });
         });
     },
 

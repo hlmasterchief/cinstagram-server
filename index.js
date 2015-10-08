@@ -1,4 +1,5 @@
 var db = require('./app/core/db');
+var cloudinary = require('./app/core/cloudinary');
 var server = require('./app/core/server');
 
 var morgan = require('morgan');
