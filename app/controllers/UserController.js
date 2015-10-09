@@ -50,32 +50,82 @@ var UserController = {
     },
 
     create: function(req, res, next) {
-        var email    = req.body.email,
-            username = req.body.username,
-            password = req.body.password;
-
-        var user = new User({
-            email: email,
-            username: username,
-            password: password,
-            avatar: ""
-        });
-
-        user.save(function(err) {
-            if (err) throw err;
-
-            var token = jwt.sign(user._id, config.secret, {
-              expiresIn: '1d'
-            });
-            console.log(user.username + "\n" + token);
-
+        if (req.body.email.length === 0) {
             res.send({
-                success: true,
-                message: 'Signup success.',
-                token: token,
-                username: username
+                success: false,
+                message: 'Email has not been filled.'
             });
-            next();
+            return next();
+        }
+
+        if (req.body.username.length === 0) {
+            res.send({
+                success: false,
+                message: 'Username has not been filled.'
+            });
+            return next();
+        }
+
+        if (req.body.password.length === 0) {
+            res.send({
+                success: false,
+                message: 'Password has not been filled.'
+            });
+            return next();
+        }
+
+        async.parallel([
+            function(callback) {
+                User.findOne({ email: req.body.email }, function (err, user) {
+                    if (err) throw err;
+
+                    if (!!user) {
+                        return callback(null, 'Email has been used.');
+                    }
+                    callback();
+                });
+            },
+            function(callback) {
+                User.findOne({ username: req.body.username }, function (err, user) {
+                    if (err) throw err;
+
+                    if (!!user) {
+                        return callback(null, 'Username has been used.');
+                    }
+                    callback();
+                });
+            }
+        ], function(err, message) {
+            if (message[0] || message[1]) {
+                res.send({
+                    success: false,
+                    message: message
+                });
+                return next();
+            }
+
+            var user = new User({
+                email:    req.body.email,
+                username: req.body.username,
+                password: req.body.password,
+                avatar:   ""
+            });
+
+            user.save(function(err) {
+                if (err) throw err;
+
+                var token = jwt.sign(user._id, config.secret, {
+                  expiresIn: '1d'
+                });
+
+                res.send({
+                    success: true,
+                    message: 'Signup success.',
+                    token: token,
+                    username: user.username
+                });
+                next();
+            });
         });
     },
 
@@ -188,7 +238,7 @@ var UserController = {
                 });
             }
         ], function(err, message) {
-            if (message[1] || message[2]) {
+            if (message[0] || message[1]) {
                 res.send({
                     success: false,
                     message: message
