@@ -151,17 +151,13 @@ var UserController = {
             return next();
         }
 
-        async.series([
+        async.parallel([
             function(callback) {
                 User.findOne({ email: req.body.email }, function (err, user) {
                     if (err) throw err;
 
                     if ((!!user) && (!user._id.equals(req.authUser._id))) {
-                        res.send({
-                            success: false,
-                            message: 'Email has been used.'
-                        });
-                        return callback(new Error('Email has been used.'));
+                        return callback(null, 'Email has been used.');
                     }
                     callback();
                 });
@@ -171,18 +167,17 @@ var UserController = {
                     if (err) throw err;
 
                     if ((!!user) && (!user._id.equals(req.authUser._id))) {
-                        res.send({
-                            success: false,
-                            message: 'Username has been used.'
-                        });
-                        return callback(new Error('Username has been used.'));
+                        return callback(null, 'Username has been used.');
                     }
                     callback();
                 });
             }
-        ], function(err) {
-            if (err) {
-                console.log("final" + err);
+        ], function(err, message) {
+            if (message[1] || message[2]) {
+                res.send({
+                    success: false,
+                    message: message
+                });
                 return next();
             }
             
