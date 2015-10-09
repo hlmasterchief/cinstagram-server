@@ -1,12 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var CommentSchema = new Schema({
-    text: String,
-    date: {
-        type: Date,
-        default: Date.now
-    },
+var LikeSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -17,4 +12,4 @@ var CommentSchema = new Schema({
     }
 });
 
-module.exports = CommentSchema;
+module.exports = LikeSchema;

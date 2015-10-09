@@ -99,7 +99,7 @@ var UserController = {
             res.send({
                 success: true,
                 message: 'Success.',
-                token: user
+                user: user
             });
         });
         next();
