@@ -15,9 +15,8 @@ var route = function(server) {
     server.get('/auth', authentication, UserController.signout);
 
     server.post('/users', UserController.create);
-    server.get('/users', UserController.read);
+    server.get('/users/:id', UserController.read);
     server.put('/users', authentication, UserController.update);
-    server.del('/users', UserController.delete);
 
     server.post('/posts', PostController.create);
     server.get('/posts', PostController.readAll);

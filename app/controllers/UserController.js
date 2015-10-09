@@ -30,7 +30,6 @@ var UserController = {
             var token = jwt.sign(user._id, config.secret, {
               expiresIn: '1d'
             });
-            console.log(user.username + "\n" + token);
 
             res.send({
                 success: true,
@@ -86,7 +85,23 @@ var UserController = {
     },
 
     read: function(req, res, next) {
-        res.send('read');
+        User.findOne({ _id: req.params.id }, function (err, user) {
+            if (err) throw err;
+
+            if (!user) {
+               res.send(404, {
+                    success: false,
+                    message: 'User not found.'
+                });
+                return next();
+            }
+
+            res.send({
+                success: true,
+                message: 'Success.',
+                token: user
+            });
+        });
         next();
     },
 
