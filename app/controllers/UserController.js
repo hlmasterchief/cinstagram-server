@@ -3,6 +3,7 @@ var jwt = require('jsonwebtoken');
 var config = require('../config');
 var cloudinary = require('cloudinary');
 var async = require("async");
+var bcrypt = require('bcrypt');
 
 var UserController = {
     signin: function(req, res, next) {
@@ -19,22 +20,26 @@ var UserController = {
                 return next();
             }
 
-            if (user.password != password) {
-                res.send({
-                    success: false,
-                    message: 'Wrong password.'
+            bcrypt.compare(password, user.password, function(err, result) {
+                if (err) throw err;
+
+                if (!result) {
+                    res.send({
+                        success: false,
+                        message: 'Wrong password.'
+                    });
+                    return next();
+                }
+
+                var token = jwt.sign(user._id, config.secret, {
+                  expiresIn: '1d'
                 });
-                return next();
-            }
 
-            var token = jwt.sign(user._id, config.secret, {
-              expiresIn: '1d'
-            });
-
-            res.send({
-                success: true,
-                message: 'Success.',
-                token: token
+                res.send({
+                    success: true,
+                    message: 'Success.',
+                    token: token
+                });
             });
         });
 
@@ -104,27 +109,31 @@ var UserController = {
                 return next();
             }
 
-            var user = new User({
-                email:    req.body.email,
-                username: req.body.username,
-                password: req.body.password,
-                avatar:   ""
-            });
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(req.body.password, salt, function(err, hash) {
+                    var user = new User({
+                        email:    req.body.email,
+                        username: req.body.username,
+                        password: hash,
+                        avatar:   ""
+                    });
 
-            user.save(function(err) {
-                if (err) throw err;
+                    user.save(function(err) {
+                        if (err) throw err;
 
-                var token = jwt.sign(user._id, config.secret, {
-                  expiresIn: '1d'
+                        var token = jwt.sign(user._id, config.secret, {
+                          expiresIn: '1d'
+                        });
+
+                        res.send({
+                            success: true,
+                            message: 'Signup success.',
+                            token: token,
+                            username: user.username
+                        });
+                        next();
+                    });
                 });
-
-                res.send({
-                    success: true,
-                    message: 'Signup success.',
-                    token: token,
-                    username: user.username
-                });
-                next();
             });
         });
     },
@@ -157,25 +166,34 @@ var UserController = {
 
     update: function(req, res, next) {
         if (!!req.body.password) {
-            if (req.body.oldPassword != req.authUser.password) {
-                res.send(403, {
-                    success: false,
-                    message: 'Wrong old password.'
-                });
-                return next();
-            }
-
-            req.authUser.password = req.body.password;
-
-            req.authUser.save(function(err) {
+            bcrypt.compare(req.body.oldPassword, req.authUser.password, function(err, result) {
                 if (err) throw err;
 
-                res.send({
-                    success: true,
-                    message: 'Update password success.',
-                    username: req.authUser.username
+                if (!result) {
+                    res.send(403, {
+                        success: false,
+                        message: 'Wrong old password.'
+                    });
+                    return next();
+                }
+
+
+                bcrypt.genSalt(10, function(err, salt) {
+                    bcrypt.hash(req.body.password, salt, function(err, hash) {
+                        req.authUser.password =  hash;
+
+                        req.authUser.save(function(err) {
+                            if (err) throw err;
+
+                            res.send({
+                                success: true,
+                                message: 'Update password success.',
+                                username: req.authUser.username
+                            });
+                            next();
+                        });
+                    });
                 });
-                next();
             });
             return next();
         }
