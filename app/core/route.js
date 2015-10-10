@@ -2,6 +2,7 @@ var UserController = require('../controllers/UserController');
 var PostController = require('../controllers/PostController');
 var CommentController = require('../controllers/CommentController');
 var LikeController = require('../controllers/LikeController');
+var FollowController = require('../controllers/FollowController');
 var authentication = require('../middleware/authentication');
 
 function homepage(req, res, next) {
@@ -30,6 +31,8 @@ var route = function(server) {
     server.del('/comments/:id', authentication, CommentController.delete);
 
     server.put('/posts/:pid/like', authentication, LikeController.update);
+
+    server.put('/users/:id/follow', authentication, FollowController.update);
 };
 
 module.exports = route;
