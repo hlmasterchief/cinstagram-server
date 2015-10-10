@@ -49,7 +49,7 @@ var PostController = {
             if (err) throw err;
 
             if (!post) {
-               res.send(404, {
+                res.send(404, {
                     success: false,
                     message: 'Post not found.'
                 });
@@ -70,7 +70,7 @@ var PostController = {
             if (err) throw err;
 
             if (!post) {
-               res.send(404, {
+                res.send(404, {
                     success: false,
                     message: 'Post not found.'
                 });
@@ -78,7 +78,7 @@ var PostController = {
             }
 
             if (!post.user.equals(req.authUser._id)) {
-               res.send(401, {
+                res.send(401, {
                     success: false,
                     message: 'Not authorized.'
                 });

@@ -1,7 +1,8 @@
-UserController = require('../controllers/UserController');
-PostController = require('../controllers/PostController');
-CommentController = require('../controllers/CommentController');
-authentication = require('../middleware/authentication');
+var UserController = require('../controllers/UserController');
+var PostController = require('../controllers/PostController');
+var CommentController = require('../controllers/CommentController');
+var LikeController = require('../controllers/LikeController');
+var authentication = require('../middleware/authentication');
 
 function homepage(req, res, next) {
     res.send('Cinstagram');
@@ -27,6 +28,8 @@ var route = function(server) {
     server.get('/comments/:id', CommentController.read);
     server.put('/comments/:id', authentication, CommentController.update);
     server.del('/comments/:id', authentication, CommentController.delete);
+
+    server.put('/posts/:pid/like', authentication, LikeController.update);
 };
 
 module.exports = route;
