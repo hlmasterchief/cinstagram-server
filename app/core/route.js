@@ -23,11 +23,10 @@ var route = function(server) {
     server.put('/posts/:id', authentication, PostController.update);
     server.del('/posts/:id', authentication, PostController.delete);
 
-    server.post('/comments', CommentController.create);
-    server.get('/comments', CommentController.readAll);
+    server.post('/posts/:pid/comments', authentication, CommentController.create);
     server.get('/comments/:id', CommentController.read);
-    server.put('/comments/:id', CommentController.update);
-    server.del('/comments/:id', CommentController.delete);
+    server.put('/comments/:id', authentication, CommentController.update);
+    server.del('/comments/:id', authentication, CommentController.delete);
 };
 
 module.exports = route;
