@@ -13,7 +13,7 @@ var UserController = {
             if (err) throw err;
 
             if (!user) {
-                res.send({
+                res.send(401, {
                     success: false,
                     message: 'User not found.'
                 });
@@ -24,7 +24,7 @@ var UserController = {
                 if (err) throw err;
 
                 if (!result) {
-                    res.send({
+                    res.send(401, {
                         success: false,
                         message: 'Wrong password.'
                     });
@@ -37,8 +37,14 @@ var UserController = {
 
                 res.send({
                     success: true,
-                    message: 'Success.',
-                    token: token
+                    message: 'Signin Success.',
+                    token: token,
+                    user: {
+                        _id:user._id,
+                        username: user.username,
+                        email: user.email,
+                        avatar: user.avatar
+                    }
                 });
             });
         });
@@ -56,7 +62,7 @@ var UserController = {
 
     create: function(req, res, next) {
         if (req.body.email.length === 0) {
-            res.send({
+            res.send(401, {
                 success: false,
                 message: 'Email has not been filled.'
             });
@@ -64,7 +70,7 @@ var UserController = {
         }
 
         if (req.body.username.length === 0) {
-            res.send({
+            res.send(401, {
                 success: false,
                 message: 'Username has not been filled.'
             });
@@ -72,20 +78,20 @@ var UserController = {
         }
 
         if (req.body.password.length === 0) {
-            res.send({
+            res.send(401, {
                 success: false,
                 message: 'Password has not been filled.'
             });
             return next();
         }
 
-        async.parallel([
+        async.series([
             function(callback) {
                 User.findOne({ email: req.body.email }, function (err, user) {
                     if (err) throw err;
 
                     if (!!user) {
-                        return callback(null, 'Email has been used.');
+                        return callback(new Error('Email has been used.'));
                     }
                     callback();
                 });
@@ -95,16 +101,17 @@ var UserController = {
                     if (err) throw err;
 
                     if (!!user) {
-                        return callback(null, 'Username has been used.');
+                        return callback(new Error('Username has been used.'));
                     }
                     callback();
                 });
             }
-        ], function(err, message) {
-            if (message[0] || message[1]) {
-                res.send({
+        ], function(err) {
+            if (err) {
+                console.log(err);
+                res.send(401, {
                     success: false,
-                    message: message
+                    message: err.message
                 });
                 return next();
             }
@@ -127,9 +134,14 @@ var UserController = {
 
                         res.send({
                             success: true,
-                            message: 'Signup success.',
+                            message: 'Signup Success.',
                             token: token,
-                            username: user.username
+                            user: {
+                                _id:user._id,
+                                username: user.username,
+                                email: user.email,
+                                avatar: user.avatar
+                            }
                         });
                         next();
                     });
