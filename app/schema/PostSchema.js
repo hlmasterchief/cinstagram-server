@@ -12,10 +12,14 @@ var PostSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    likes: {
+    like: {
         type: Number,
         default: 0
-    }
+    },
+    likes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 });
 
 module.exports = PostSchema;

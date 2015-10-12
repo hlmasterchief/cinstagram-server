@@ -40,7 +40,27 @@ var PostController = {
     },
 
     readAll: function(req, res, next) {
-        res.send('readAll');
+        Post.find({ })
+            .populate('user', 'username avatar')
+            .sort({createdAt: -1})
+            .exec(function(err, posts) {
+
+            if (err) throw err;
+
+            if (!posts) {
+                res.send(404, {
+                    success: false,
+                    message: 'Posts not found.'
+                });
+                return next();
+            }
+
+            res.send({
+                success: true,
+                message: 'Get all posts success.',
+                posts: posts
+            });
+        });
         next();
     },
 

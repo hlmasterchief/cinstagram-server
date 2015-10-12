@@ -29,6 +29,13 @@ var LikeController = {
                         success: true,
                         message: 'Unlike successfully.'
                     });
+
+                    Post.update({_id: req.params.pid}, {
+                        $inc: {'like': -1},
+                        $pull: {'likes': req.authUser._id}
+                    }, function(err,res) {
+                        console.log(err);
+                    });
                     return next();
                 }
 
@@ -44,11 +51,18 @@ var LikeController = {
                         success: true,
                         message: 'Like successfully.'
                     });
+
+                    Post.update({_id: req.params.pid}, {
+                        $inc: {'like': 1},
+                        $push: {'likes': req.authUser._id}
+                    }, function(err,res) {
+                        console.log(err);
+                    });
                     next();
                 });
             });
         });
-    }
+    }  
 };
 
 module.exports = LikeController;

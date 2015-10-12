@@ -9,6 +9,6 @@ server.use(restify.queryParser());
 server.use(restify.bodyParser());
 
 server.use(restify.CORS());
-// restify.CORS.ALLOW_HEADERS.push('x-access-token');
+restify.CORS.ALLOW_HEADERS.push('x-access-token');
 
 module.exports = server;
