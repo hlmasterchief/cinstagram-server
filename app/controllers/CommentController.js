@@ -38,14 +38,36 @@ var CommentController = {
                     post: comment.post,
                     user: comment.user
                 });
+
+                Post.update({_id: post._id}, {
+                    $push: {'comments': comment._id}
+                }, function(err,res) {
+                    console.log(err);
+                });
                 next();
             });
         });
     },
 
     readAll: function(req, res, next) {
-        res.send('readAll');
-        next();
+        Comment.find({ post: req.params.pid }, function (err, comments) {
+            if (err) throw err;
+
+            if (!comments) {
+               res.send(404, {
+                    success: false,
+                    message: 'Comments not found.'
+                });
+                return next();
+            }
+
+            res.send({
+                success: true,
+                message: 'Get all comment success.',
+                comments: comments
+            });
+            next();
+        });
     },
 
     read: function(req, res, next) {

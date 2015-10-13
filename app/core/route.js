@@ -21,12 +21,13 @@ var route = function(server) {
     server.put('/users', authentication, UserController.update);
 
     server.post('/posts', authentication, PostController.create);
-    server.get('/posts/all', authentication, PostController.readAll);
+    server.get('/posts/all', PostController.readAll);
     server.get('/posts/:id', PostController.read);
     server.put('/posts/:id', authentication, PostController.update);
     server.del('/posts/:id', authentication, PostController.delete);
 
     server.post('/posts/:pid/comments', authentication, CommentController.create);
+    server.get('/posts/:pid/comments', CommentController.readAll);
     server.get('/comments/:id', CommentController.read);
     server.put('/comments/:id', authentication, CommentController.update);
     server.del('/comments/:id', authentication, CommentController.delete);

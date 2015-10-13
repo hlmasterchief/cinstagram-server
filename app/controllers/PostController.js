@@ -41,8 +41,11 @@ var PostController = {
 
     readAll: function(req, res, next) {
         Post.find({ })
+            // .lean()
             .populate('user', 'username avatar')
-            .sort({createdAt: -1})
+            .populate('comments', 'text user')
+            .populate('likes', 'username')
+            .sort({date: -1})
             .exec(function(err, posts) {
 
             if (err) throw err;
@@ -55,10 +58,20 @@ var PostController = {
                 return next();
             }
 
-            res.send({
-                success: true,
-                message: 'Get all posts success.',
-                posts: posts
+            var options = {
+              path: 'comments.user',
+              select: 'username',
+              model: 'User'
+            };
+
+            Post.populate(posts, options, function (err, postsFull) {
+                if (err) throw err;
+
+                res.send({
+                    success: true,
+                    message: 'Get all posts success.',
+                    posts: postsFull
+                });
             });
         });
         next();
