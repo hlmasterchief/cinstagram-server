@@ -1,4 +1,5 @@
 var Post = require('../models/Post');
+var User = require('../models/User');
 var cloudinary = require('cloudinary');
 
 var PostController = {
@@ -30,6 +31,12 @@ var PostController = {
                     message: 'Post success.',
                     image: post.image,
                     caption: post.caption
+                });
+
+                User.update({_id: req.authUser._id}, {
+                    $push: {'posts': post._id}
+                }, function(err,res) {
+                    console.log(err);
                 });
                 next();
             });
@@ -162,6 +169,12 @@ var PostController = {
                 res.send({
                     success: true,
                     message: 'Post delete success.',
+                });
+
+                User.update({_id: req.authUser._id}, {
+                    $pull: {'posts': post._id}
+                }, function(err,res) {
+                    console.log(err);
                 });
                 next();
             });

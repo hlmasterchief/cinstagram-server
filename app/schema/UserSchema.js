@@ -5,7 +5,19 @@ var UserSchema = new Schema({
     email: String,
     username: String,
     password: String,
-    avatar: String
+    avatar: String,
+    posts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Post'
+    }],
+    followers: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    followings: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }]
 });
 
 module.exports = UserSchema;

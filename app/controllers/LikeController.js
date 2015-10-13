@@ -31,7 +31,6 @@ var LikeController = {
                     });
 
                     Post.update({_id: req.params.pid}, {
-                        $inc: {'like': -1},
                         $pull: {'likes': req.authUser._id}
                     }, function(err,res) {
                         console.log(err);
@@ -53,7 +52,6 @@ var LikeController = {
                     });
 
                     Post.update({_id: req.params.pid}, {
-                        $inc: {'like': 1},
                         $push: {'likes': req.authUser._id}
                     }, function(err,res) {
                         console.log(err);

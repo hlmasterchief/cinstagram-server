@@ -157,6 +157,12 @@ var CommentController = {
                     success: true,
                     message: 'Comment delete success.',
                 });
+
+                Post.update({_id: post._id}, {
+                    $pull: {'comments': comment._id}
+                }, function(err,res) {
+                    console.log(err);
+                });
                 next();
             });
         });

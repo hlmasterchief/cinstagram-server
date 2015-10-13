@@ -29,6 +29,18 @@ var FollowController = {
                         success: true,
                         message: 'Unfollow successfully.'
                     });
+
+                    User.update({_id: req.authUser._id}, {
+                        $pull: {'followings': req.params.id}
+                    }, function(err,res) {
+                        console.log(err);
+                    });
+
+                    User.update({_id: req.params.id}, {
+                        $pull: {'followers': req.authUser._id}
+                    }, function(err,res) {
+                        console.log(err);
+                    });
                     return next();
                 }
 
@@ -43,6 +55,18 @@ var FollowController = {
                     res.send({
                         success: true,
                         message: 'Follow successfully.'
+                    });
+
+                    User.update({_id: req.authUser._id}, {
+                        $push: {'followings': req.params.id}
+                    }, function(err,res) {
+                        console.log(err);
+                    });
+
+                    User.update({_id: req.params.id}, {
+                        $push: {'followers': req.authUser._id}
+                    }, function(err,res) {
+                        console.log(err);
                     });
                     next();
                 });
