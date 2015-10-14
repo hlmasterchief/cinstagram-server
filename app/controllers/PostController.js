@@ -84,6 +84,44 @@ var PostController = {
         next();
     },
 
+    readUser: function(req, res, next) {
+        Post.find({ user: req.params.id })
+            // .lean()
+            .populate('user', 'username avatar')
+            .populate('comments', 'text user')
+            .populate('likes', 'username')
+            .sort({date: -1})
+            .exec(function(err, posts) {
+
+            if (err) throw err;
+
+            if (!posts) {
+                res.send(404, {
+                    success: false,
+                    message: 'Posts not found.'
+                });
+                return next();
+            }
+
+            var options = {
+              path: 'comments.user',
+              select: 'username',
+              model: 'User'
+            };
+
+            Post.populate(posts, options, function (err, postsFull) {
+                if (err) throw err;
+
+                res.send({
+                    success: true,
+                    message: 'Get user posts success.',
+                    posts: postsFull
+                });
+            });
+        });
+        next();
+    },
+
     read: function(req, res, next) {
         Post.findOne({ _id: req.params.id }, function (err, post) {
             if (err) throw err;

@@ -20,6 +20,8 @@ var route = function(server) {
     server.get('/users/:id', UserController.read);
     server.put('/users', authentication, UserController.update);
 
+    server.get('/users/:id/posts', PostController.readUser);
+
     server.post('/posts', authentication, PostController.create);
     server.get('/posts/all', PostController.readAll);
     server.get('/posts/:id', PostController.read);

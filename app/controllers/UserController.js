@@ -122,7 +122,7 @@ var UserController = {
                         email:    req.body.email,
                         username: req.body.username,
                         password: hash,
-                        avatar:   ""
+                        avatar:   "./img/ionic.png"
                     });
 
                     user.save(function(err) {
@@ -156,7 +156,11 @@ var UserController = {
     },
 
     read: function(req, res, next) {
-        User.findOne({ _id: req.params.id }, function (err, user) {
+        User.findOne({ _id: req.params.id })
+            .populate('followers', 'username avatar followers followings')
+            .populate('followings', 'username avatar followers followings')
+            .exec(function (err, user) {
+        // User.findOne({ _id: req.params.id }, function (err, user) {
             if (err) throw err;
 
             if (!user) {
@@ -169,8 +173,15 @@ var UserController = {
 
             res.send({
                 success: true,
-                message: 'Success.',
-                user: user
+                message: 'Read profile success.',
+                profile: {
+                    _id:user._id,
+                    username: user.username,
+                    avatar: user.avatar,
+                    posts: user.posts,
+                    followers: user.followers,
+                    followings: user.followings,
+                }
             });
         });
         next();
