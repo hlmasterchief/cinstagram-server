@@ -221,7 +221,7 @@ var UserController = {
             return next();
         }
 
-        if (!!req.files.avatar) {
+        if (!!req.files && !!req.files.avatar) {
             cloudinary.uploader.upload(req.files.avatar.path, function(result) { 
                 
                 req.authUser.avatar = result.url;
@@ -295,8 +295,13 @@ var UserController = {
 
                 res.send({
                     success: true,
-                    message: 'Update username/email success.',
-                    username: req.authUser.username
+                    message: 'Update profile success.',
+                    user: {
+                        _id: req.authUser._id,
+                        username: req.authUser.username,
+                        email: req.authUser.email,
+                        avatar: req.authUser.avatar
+                    }
                 });
                 next();
             });
