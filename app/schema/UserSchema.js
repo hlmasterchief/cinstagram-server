@@ -20,4 +20,6 @@ var UserSchema = new Schema({
     }]
 });
 
+UserSchema.index({username: 'text'});
+
 module.exports = UserSchema;

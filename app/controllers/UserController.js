@@ -156,6 +156,29 @@ var UserController = {
         });
     },
 
+    search: function(req, res, next) {
+        if (!req.body || !req.body.searchKey) {
+            res.send(401, {
+                success: false,
+                message: "No searchKey"
+            });
+            return next();
+        }
+
+        User.find({ $text : { $search : req.body.searchKey } })
+            .select('username avatar')
+            .exec(function(err, users) {
+            if (err) throw err;
+
+            if (!users) {
+                res.send({success: false, message: 'User not found.'});
+                return next();
+            }
+            res.send({success: true, message: 'Search successfully.', users: users});
+            next();
+        });
+    },
+
     readAll: function(req, res, next) {
         res.send('readAll');
         next();
