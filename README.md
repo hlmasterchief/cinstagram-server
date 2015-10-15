@@ -1,2 +1,7 @@
+Clone instagram server side
+
 cinstagram-server
-http://cinstagram.herokuapp.com/
+https://bitbucket.org/hlmasterchief93/cinstagram-server
+
+cinstagram-client
+https://bitbucket.org/hlmasterchief93/cinstagram-client
