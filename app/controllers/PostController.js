@@ -84,6 +84,47 @@ var PostController = {
         next();
     },
 
+    readFeed: function(req, res, next) {
+        var feed = req.authUser.followings;
+        feed.push(req.authUser._id);
+
+        Post.find({ user: { $in: feed } })
+            // .lean()
+            .populate('user', 'username avatar')
+            .populate('comments', 'text user')
+            .populate('likes', 'username')
+            .sort({date: -1})
+            .exec(function(err, posts) {
+
+            if (err) throw err;
+
+            if (!posts) {
+                res.send(404, {
+                    success: false,
+                    message: 'Posts not found.'
+                });
+                return next();
+            }
+
+            var options = {
+              path: 'comments.user',
+              select: 'username',
+              model: 'User'
+            };
+
+            Post.populate(posts, options, function (err, postsFull) {
+                if (err) throw err;
+
+                res.send({
+                    success: true,
+                    message: 'Get all posts success.',
+                    posts: postsFull
+                });
+            });
+        });
+        next();
+    },
+
     readUser: function(req, res, next) {
         Post.find({ user: req.params.id })
             // .lean()
