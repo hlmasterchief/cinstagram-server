@@ -55,7 +55,13 @@ var UserController = {
     signout: function(req, res, next) {
         res.send({
             success: true,
-            message: 'User signout.'
+            message: 'User signout.',
+            user: {
+                _id: req.authUser._id,
+                username: req.authUser.username,
+                email: req.authUser.email,
+                avatar: req.authUser.avatar
+            }
         });
         next();
     },
