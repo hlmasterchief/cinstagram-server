@@ -60,7 +60,85 @@ var LikeController = {
                 });
             });
         });
-    }  
+    },
+
+    activity: function(req, res, next) {
+        var followings = req.authUser.followings;
+
+        Like.find({ user: { $in: followings } })
+            // .lean()
+            .populate('user', 'username avatar')
+            .populate('post', 'image user')
+            // .sort({date: -1})
+            .exec(function(err, activities) {
+
+            if (err) throw err;
+
+            if (!activities) {
+                res.send(404, {
+                    success: false,
+                    message: 'Activities not found.'
+                });
+                return next();
+            }
+
+            var options = {
+              path: 'post.user',
+              select: 'username',
+              model: 'User'
+            };
+
+            Like.populate(activities, options, function (err, activitiesFull) {
+                if (err) throw err;
+
+                res.send({
+                    success: true,
+                    message: 'Get all activities success.',
+                    activities: activitiesFull
+                });
+            });
+        });
+        next();
+    },
+
+    activityYou: function(req, res, next) {
+        var posts = req.authUser.posts;
+
+        Like.find({ post: { $in: posts } })
+            // .lean()
+            .populate('user', 'username avatar')
+            .populate('post', 'image user')
+            // .sort({date: -1})
+            .exec(function(err, activities) {
+
+            if (err) throw err;
+
+            if (!activities) {
+                res.send(404, {
+                    success: false,
+                    message: 'Activities not found.'
+                });
+                return next();
+            }
+
+            var options = {
+              path: 'post.user',
+              select: 'username',
+              model: 'User'
+            };
+
+            Like.populate(activities, options, function (err, activitiesFull) {
+                if (err) throw err;
+
+                res.send({
+                    success: true,
+                    message: 'Get all activities success.',
+                    activities: activitiesFull
+                });
+            });
+        });
+        next();
+    }
 };
 
 module.exports = LikeController;

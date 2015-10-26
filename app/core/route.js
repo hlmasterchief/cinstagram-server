@@ -36,6 +36,9 @@ var route = function(server) {
     server.put('/comments/:id', authentication, CommentController.update);
     server.del('/comments/:id', authentication, CommentController.delete);
 
+    server.get('/activity', authentication, LikeController.activity);
+    server.get('/activity/you', authentication, LikeController.activityYou);
+
     server.put('/posts/:pid/like', authentication, LikeController.update);
 
     server.put('/users/:id/follow', authentication, FollowController.update);
