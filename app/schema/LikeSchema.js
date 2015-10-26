@@ -9,6 +9,10 @@ var LikeSchema = new Schema({
     post: {
         type: Schema.Types.ObjectId,
         ref: 'Post'
+    },
+    date: {
+        type: Date,
+        default: Date.now
     }
 });
 

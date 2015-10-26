@@ -69,7 +69,7 @@ var LikeController = {
             // .lean()
             .populate('user', 'username avatar')
             .populate('post', 'image user')
-            // .sort({date: -1})
+            .sort({date: -1})
             .exec(function(err, activities) {
 
             if (err) throw err;
@@ -108,7 +108,7 @@ var LikeController = {
             // .lean()
             .populate('user', 'username avatar')
             .populate('post', 'image user')
-            // .sort({date: -1})
+            .sort({date: -1})
             .exec(function(err, activities) {
 
             if (err) throw err;
